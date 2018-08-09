@@ -7,36 +7,28 @@ if($method == 'POST'){
 	$requestBody = file_get_contents('php://input');
 	$json = json_decode($requestBody);
 
-	$employeeid = $json->result->parameters->employeeid;
-    $nationalid = $json->result->parameters->national_id;
-	$nationalid = str_replace(' ', '', $nationalid);
+	$project_type = $json->result->parameters->project_type;
+    $professionalism = $json->result->parameters->professionalism;
+	$know_how = $json->result->parameters->know_how;
+    $timely_completion = $json->result->parameters->timely_completion;
+	$value_for_money = $json->result->parameters->value_for_money;
+	$recommend = $json->result->parameters->recommend;
+	$satisfaction = $json->result->parameters->satisfaction;
+	$recommendations = $json->result->parameters->recommendations;
+	
 	
 	// Connect to Database
 
-$server = "us-cdbr-iron-east-05.cleardb.net";
-$username = "b45dbf5cc85b62";
-$password = "0025448a";
-$db = "heroku_be2c1e3f2f85390";
+$server = "us-cdbr-iron-east-01.cleardb.net";
+$username = "bace85d0f40589";
+$password = "8a300288";
+$db = "heroku_86cdb196b426113";
 $connection = new mysqli($server, $username, $password, $db);
 
-$sql = "SELECT * from staff where code = $employeeid and national_id = '$nationalid'";
-$result = $connection->query($sql);
-$emp = $result->fetch_assoc(); 
-if ($result->num_rows === 0) {
-	$speech = "Sorry we could not find a match for the details provided.Please ensure you have entered the correct Employee Code and National ID number.";
-	 }
-else {
-	$token = sha1(uniqid($employeeid, true));
-$tym = $_SERVER['REQUEST_TIME'];
-$mnth = date("m");
-$yr = date("Y");
-	$sql2 = "insert into pending_payslips(employee_id,token,tstamp,month,year) VALUES ($employeeid,'$token',$tym,$mnth,$yr)";
-	$result2 = $connection->query($sql2);
-$speech = "Thank You ". $emp['first_name']. ". Click on the following link to download your payslip. Please note that this link can only be used once and you will require your password to open the pdf file. \r\n 
+$sql2 = "insert into pending_payslips(project_type,professionalism,know_how,timely_completion,value_for_money,recommend,satisfaction,recommendations) VALUES ($project_type,$professionalism,$know_how,$timely_completion,$value_for_money,$recommend,$satisfaction,$recommendations)";
+$result2 = $connection->query($sql2);
+$speech = "Thank you for your valued feedback. If you have any additional feedback or questions we'd love to hear from you. You can email us on info@lorimak.co.zw.";
 
-http://quriousconsulting.com/payslip.php?token=$token";
-
-}
 
 	$response = new \stdClass();
 	$response->speech = $speech;
